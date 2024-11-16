@@ -31,7 +31,10 @@ watch_path = ["src", "assets"]
 
 # CSS style file
 
-style = ["/tailwind.css"]
+style = [
+    "/tailwind.css",
+    "https://fonts.googleapis.com/css2?family=Sometype+Mono:ital,wght@0,400..700;1,400..700&display=swap"
+]
 
 # Javascript code file
 script = []
@@ -41,3 +44,5 @@ script = []
 # Javascript code file
 # serve: [dev-server] only
 script = []
+
+
