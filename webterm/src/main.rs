@@ -14,6 +14,11 @@ fn main() {
 fn App() -> Element {
 
     rsx! {
-        link { rel: "stylesheet", href: "main.css" }
+        link { rel: "stylesheet", href: "main.css" },
+        div { id:"body", padding: "0.5rem", position: "relative",
+            div { font_size: "1.5rem",
+                p { "Welcome to Raghu's Terminal! (v0.1.0)" }
+            }
+        }
     }
 }
