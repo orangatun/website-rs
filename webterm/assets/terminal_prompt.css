@@ -1,0 +1,34 @@
+
+.prompt {
+    color: #EF800A;
+    padding-right: 0.5em;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+
+input {
+    background-color: transparent;
+    padding: 0;
+    border: 0;
+    font: 1.3rem "Sometype Mono", monospace;
+    height: 2em;
+    color:white;
+    width: 80%;
+    display: inline-flexbox;
+    right:0;
+    text-shadow: 0 0 5px #C8C8C8;
+
+    border-style: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+
+
+input:focus {
+    background-color: transparent;
+    border: 0;
+    margin: 0;
+    outline: none;
+}
