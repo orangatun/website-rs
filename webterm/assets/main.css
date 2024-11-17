@@ -2,11 +2,13 @@ body {
     background-color: #1a001a;
     background-image: radial-gradient(ellipse at center, #009600C0, #132E13);
     height: 100vh;
-
+    padding-left: 1em;
+    margin: 0;
     color: white;
     font: 1.3rem "Sometype Mono", monospace;
     text-shadow: 0 0 5px #C8C8C8;
 
+    caret-color: #EF800A;
 }
 
 /* This is to add the faint black lines overlay on top of the terminal */
@@ -18,12 +20,18 @@ body::after {
     left: 0;
     width: 100vw;
     height: 100vh;
+    margin:0;
     background: repeating-linear-gradient(
         #00000040, 
         #00000040 1px,
         transparent 1px, 
         transparent 2px
     );
+}
+
+.container {
+    padding: 0.5em;
+    margin: 0;
 }
 
 ::selection {
