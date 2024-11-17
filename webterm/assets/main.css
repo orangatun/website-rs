@@ -42,3 +42,11 @@ body::after {
 #header {
     max-width: 1200px;
 }
+
+.entries-list {
+    padding: 0;
+}
+
+p {
+    margin: 0.5em;
+}
