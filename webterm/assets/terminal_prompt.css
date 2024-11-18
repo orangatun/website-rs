@@ -52,3 +52,12 @@ ul {
     font-size: 0.5em;
     color: #FFFFFF40;
 }
+
+.ls-item-container {
+    padding: 0 1em 0 1em;
+    display: inline-flex;
+}
+
+.directory {
+    color:#CBCBCB;
+}

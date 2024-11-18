@@ -29,11 +29,11 @@ fn fs() -> &'static HashMap<&'static str, &'static [&'static str; 4]> {
     static FS: OnceLock<HashMap<&str,   &'static [&'static str; 4]>> = OnceLock::new();
     FS.get_or_init(|| {
         let mut fs = HashMap::from([
-            ("/", &["about", "projects", "work", "random"]),
-            ("about/", &["summary", "/secrets", "", ""]),
-            ("about/secrets/", &["shhh", "", "", ""]),
-            ("projects/", &["summary", "", "", ""]),
-            ("random/", &["warp", "rules_of_internet", "", ""])
+            ("/", &["about/", "projects/", "work/", "random/"]),
+            ("/about/", &["summary", "secrets/", "", ""]),
+            ("/about/secrets/", &["shhh", "", "", ""]),
+            ("/projects/", &["summary", "", "", ""]),
+            ("/random/", &["warp", "rules_of_internet", "", ""])
         ]);
         fs
     })
@@ -71,9 +71,40 @@ fn app() -> Element {
 }
 
 fn ls_response(words: Vec::<String>, current_path: Signal<HashMap::<u8, String>>) -> Element{
+    let mut key: u8 = 0u8;
+    let mut path: String = String::new();
+    for i in 0..current_path().len() {
+        path.push_str(&format!("{}",current_path().get(&key).unwrap()));
+        key+=1u8;
+    }
+    let contents = **fs().get(path.as_str()).unwrap();
+
     rsx! {
+        link { rel: "stylesheet", href: "terminal_prompt.css" },
         div {
-            "Directories and Files go here",
+            if path!="/" {
+                div {
+                    class: "ls-item-container",
+                    span { class: "directory",
+                        ".."
+                    }
+                }
+            } 
+            div {
+                class: "ls-item-container",
+                span { class: "directory",
+                    "."
+                }
+            }
+            for i in contents {
+                if !i.is_empty() {
+                    div { class: "ls-item-container",
+                        span { class: if i.ends_with("/") { "directory"} else {"file"},
+                            "{i}"
+                        },
+                    }
+                }
+            }
         }
     }
 }
