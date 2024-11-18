@@ -17,6 +17,7 @@ enum Errors {
     CommandNotFound,
     ExtraParametersPassed,
     PathNotFound,
+    DirectoryNotFound,
     FileNotFound
 }
 
@@ -70,13 +71,19 @@ fn app() -> Element {
     }
 }
 
-fn ls_response(words: Vec::<String>, current_path: Signal<HashMap::<u8, String>>) -> Element{
-    let mut key: u8 = 0u8;
+fn build_abs_path(current_path: Signal<HashMap::<u8, String>>) -> String{
     let mut path: String = String::new();
+    let mut key: u8 = 0u8;
     for i in 0..current_path().len() {
         path.push_str(&format!("{}",current_path().get(&key).unwrap()));
         key+=1u8;
     }
+    path
+}
+
+fn ls_response(words: Vec::<String>, current_path: Signal<HashMap::<u8, String>>) -> Element{
+    let mut key: u8 = 0u8;
+    let path = build_abs_path(current_path);
     let contents = **fs().get(path.as_str()).unwrap();
 
     rsx! {
@@ -117,17 +124,66 @@ fn cat_dog_response(words: Vec::<String>) -> Element{
     }
 }
 
+fn build_element(st: &str) -> Element {
+    rsx! {
+        div {
+            "{st}"
+        }
+    }
+}
+
 
 fn cd_response(words: Vec::<String>, mut current_path: Signal<HashMap::<u8, String>>) -> Element{
-    if words.len()==1 {
+    let mut word: String = String::new();
+    if words.len()>1 {
+        for i in 1..words.len() {
+            if words.get(i).unwrap().len()!=0 {
+                if(word.len()>0) {
+                    return resolve_error(Errors::ExtraParametersPassed);
+                }
+                word.push_str(words.get(i).unwrap());
+            }
+        }
+    }
+
+    if(words.len()==1 || word.len()==0) {
         for i in 1..current_path().len() {
             let key = i as u8;
             current_path().remove(&key);
         }
     } else {
-        //Path check, and change
+        let parts : Vec::<&str> = word.trim().split("/").collect();
+        if parts.len()>2 {
+            return build_element("Only cd to parent or child directories are supported at the moment.")
+        } else {
+            match word.trim() {
+                "." | "./" => return build_element("No change in directory"),
+                ".." | "../" => {
+                    if current_path().len()==1 {
+                        return build_element("Already at root directory. Cannot go higher.");
+                    } else {
+                        let mut last_key: u8 = current_path().len() as u8;
+                        last_key-=1u8;
+                        current_path.write().remove(&last_key);
+                        return build_element(format!("Path changed to {}", build_abs_path(current_path)).as_str());
+                    }
+                },
+                _ => {
+                    let pwd = build_abs_path(current_path);
+                    let contents = **fs().get(pwd.as_str()).unwrap();
+                    let dir: String = format!("{}/",*parts.get(0).unwrap());
+                    let key: u8 = current_path().len() as u8;
+                    if contents.contains(&dir.as_str()) {
+                        current_path.write().insert(key, dir);
+                        return build_element(format!("Path changed to {}", build_abs_path(current_path)).as_str());
+                    } else {
+                        return resolve_error(Errors::DirectoryNotFound);
+                    }
+                }
+            }
+        }
     }
-    
+
     rsx! {    
         div {
             "cd response here",
@@ -176,7 +232,7 @@ fn generate_response(req: String, current_path: Signal<HashMap::<u8, String>>) -
                 let p_len = (current_path().len() as u8)-1u8;
                 return rsx! {
                         div {
-                            "The current working directory is: {current_path().get(&p_len).unwrap()}"
+                            "The current working directory is: {build_abs_path(current_path)}"
                         }
                     }
             }, 
