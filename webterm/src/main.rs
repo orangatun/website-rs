@@ -18,7 +18,8 @@ enum Errors {
     ExtraParametersPassed,
     PathNotFound,
     DirectoryNotFound,
-    FileNotFound
+    FileNotFound,
+    FileNotDirectory,
 }
 
 struct TerminalEntryData {
@@ -37,6 +38,20 @@ fn fs() -> &'static HashMap<&'static str, &'static [&'static str; 4]> {
             ("/random/", &["warp", "rules_of_internet", "", ""])
         ]);
         fs
+    })
+}
+
+fn files() -> &'static HashMap<&'static str, &'static str> {
+    static FILES: OnceLock<HashMap<&str, &str>> = OnceLock::new();
+    FILES.get_or_init(|| {
+        let mut files = HashMap::from([
+            ("/about/summary", "This project is built in Rust, using Dioxus, and some CSS."),
+            ("/about/secrets/shh", "There's an `exit` command. Don't try that."),
+            ("/projects/summary", "Let me talk about this one. I worked 4 days on building this after two years of not using Rust. I'd used Rust for 3 months before this, and I'd never heard of Dioxus before. Here we are. I'm a quick learner and I love to push myself to learn."),
+            ("/random/warp", "I think Warp is pretty cool. I'd love to be a part of the team, and contribute to making it a great product."),
+            ("/random/rules_of_internet", "It's silly, and mostly trolls. Of course, it's on a chan! Look up rule 16.")
+        ]);
+        files
     })
 }
 
@@ -116,10 +131,32 @@ fn ls_response(words: Vec::<String>, current_path: Signal<HashMap::<u8, String>>
     }
 }
 
-fn cat_dog_response(words: Vec::<String>) -> Element{
-    rsx! {
-        div {
-            "Cat/Dog response",
+fn cat_dog_response(words: Vec::<String>, mut current_path: Signal<HashMap::<u8, String>>) -> Element{
+    let mut word: String = String::new();
+    if words.len()>1 {
+        for i in 1..words.len() {
+            if words.get(i).unwrap().len()!=0 {
+                if(word.len()>0) {
+                    return resolve_error(Errors::ExtraParametersPassed);
+                }
+                word.push_str(words.get(i).unwrap());
+            }
+        }
+    }
+
+    let mut path: String = build_abs_path(current_path);
+    path.push_str(word.as_str());
+    let contents = files().get(path.as_str());
+    match contents {
+        None => {
+            return build_element("File Not Found");
+        },
+        Some(val) => {
+            return rsx! {
+                div {
+                    "{**val}"
+                }
+            }
         }
     }
 }
@@ -237,7 +274,7 @@ fn generate_response(req: String, current_path: Signal<HashMap::<u8, String>>) -
                     }
             }, 
             "cat" | "dog" => {
-                return cat_dog_response(words);
+                return cat_dog_response(words, current_path);
             },
             "exit" => {
                 return resolve_exit();
