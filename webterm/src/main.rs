@@ -231,7 +231,14 @@ fn cd_response(words: Vec::<String>, mut current_path: Signal<HashMap::<u8, Stri
 fn resolve_error(err: Errors) -> Element {
     rsx! {
         div {
-            "Error resolved here"
+            match err {
+                Errors::CommandNotFound => "Command not found. Use 'help' command to see list of commands.",
+                Errors::ExtraParametersPassed => "Extra parameters found in the command.",
+                Errors::PathNotFound => "Path not found.",
+                Errors::DirectoryNotFound => "Directory not found. Please check spelling and case.",
+                Errors::FileNotFound => "File not found in directory. Please check spelling and case.",
+                Errors::FileNotDirectory => "This is a file, not a directory. Directories end with a '/'"
+            }
         }
     }
 }
