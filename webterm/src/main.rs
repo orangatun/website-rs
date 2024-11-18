@@ -247,6 +247,60 @@ fn resolve_exit() -> Element {
     }
 }
 
+fn help_response() -> Element {
+
+    rsx! {
+        div {
+            span { class: "help-command",
+                "ls"
+            }, 
+            p { class: "help-desc",
+                "Lists files and directories inside current directory."
+            }
+        },
+        div {
+            span { class: "help-command",
+                "cd"
+            }, 
+            p { class: "help-desc",
+                "Changes directory to the go up one level (parent), or down one level (child)."
+            }
+        },
+        div {
+            span { class: "help-command",
+                "pwd"
+            }, 
+            p { class: "help-desc",
+                "Lists the full path of current working directory."
+            }
+        },
+        div {
+            span { class: "help-command",
+                "cat"
+            }, 
+            p { class: "help-desc",
+                "Used to print the contents of a file."
+            }
+        },
+        div {
+            span { class: "help-command",
+                "dog"
+            }, 
+            p { class: "help-desc",
+                "Used to print the contents of a file."
+            }
+        },
+        div {
+            span { class: "help-command",
+                "help"
+            }, 
+            p { class: "help-desc",
+                "Displays this list of commands available."
+            }
+        }
+    }
+}
+
 fn generate_response(req: String, current_path: Signal<HashMap::<u8, String>>) -> Element {
     let words: Vec<String> = req.trim().split_whitespace().map(|v| v.to_string()).collect();
 
@@ -275,6 +329,9 @@ fn generate_response(req: String, current_path: Signal<HashMap::<u8, String>>) -
             }, 
             "cat" | "dog" => {
                 return cat_dog_response(words, current_path);
+            },
+            "help" => {
+                return help_response();
             },
             "exit" => {
                 return resolve_exit();
