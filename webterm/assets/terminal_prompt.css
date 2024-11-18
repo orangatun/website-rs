@@ -47,3 +47,8 @@ input:focus {
 ul {
     margin:0;
 }
+
+.whisper-text {
+    font-size: 0.5em;
+    color: #FFFFFF40;
+}
