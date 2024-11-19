@@ -22,9 +22,21 @@ enum Errors {
     FileNotDirectory,
 }
 
+#[derive(PartialEq)]
+enum Theme {
+    MatrixInspired,
+    EverythingBlue,
+    VintageTerminal,
+    Modern,
+}
+
 struct TerminalEntryData {
     req: String,
     resp: Element
+}
+
+struct ThemeStruct {
+    theme: Theme,
 }
 
 fn fs() -> &'static HashMap<&'static str, &'static [&'static str; 4]> {
@@ -66,11 +78,17 @@ fn app() -> Element {
 
 
     let date_string = format!("{}", Local::now().format("%a, %m/%d/%Y, %l:%M:%S%p UTC%Z"));
+    let mut theme = use_signal(|| ThemeStruct {theme: Theme::Modern, });
     rsx! {
-        link { rel: "stylesheet", href:"vintage-terminal.css" },
-        link { rel: "stylesheet", href: "main.css" },
-        div { class:"container", padding: "0.5rem", position: "relative",
-            div { font_size: "1.5rem",
+        link { rel: "stylesheet", href:  match theme.read().theme {
+            Theme::MatrixInspired => { "matrix-inspired.css" },
+            Theme::EverythingBlue => { "blue-everywhere.css" },
+            Theme::VintageTerminal => { "vintage-terminal.css" },
+            Theme::Modern => { "modern.css" }
+        }},
+        if theme.read().theme != Theme::Modern {
+            link { rel: "stylesheet", href: "main.css" }
+        }
         div { class:"root-container", 
             div { class:"container", padding: "0.5rem", position: "relative", font_size: "1.5rem",
                 p { "Welcome to Raghu's Terminal! (v0.1.0)" },
@@ -87,18 +105,11 @@ fn app() -> Element {
                 ul {
                     class: "entries-list",
                     for id in start_from()..ending() {
+                        TerminalEntry { key: "{id}", id, entries, current_path, theme}
                     }
                 },
+                TerminalActiveEntry { entries , start_from, ending , current_path, theme},
             }
-        }, 
-        div {
-            ul {
-                class: "entries-list",
-                for id in start_from()..ending() {
-                    TerminalEntry { key: "{id}", id, entries, current_path}
-                }
-            },
-            TerminalActiveEntry { entries , start_from, ending , current_path},
         }
     }
 }
@@ -201,10 +212,14 @@ fn cd_response(words: Vec::<String>, mut current_path: Signal<HashMap::<u8, Stri
     }
 
     if(words.len()==1 || word.len()==0) {
+        if current_path().len()==1 {
+            return build_element("Already at root directory. Cannot go higher.");
+        }
         for i in 1..current_path().len() {
             let key = i as u8;
             current_path.write().remove(&key);
         }
+        return build_element("Changed directory to root.")
     } else {
         let parts : Vec::<&str> = word.trim().split("/").collect();
         if parts.len()>2 {
@@ -226,21 +241,18 @@ fn cd_response(words: Vec::<String>, mut current_path: Signal<HashMap::<u8, Stri
                     let pwd = build_abs_path(current_path);
                     let contents = **fs().get(pwd.as_str()).unwrap();
                     let dir: String = format!("{}/",*parts.get(0).unwrap());
+                    let filename: String = dir[0..dir.len()-1].to_string();
                     let key: u8 = current_path().len() as u8;
                     if contents.contains(&dir.as_str()) {
                         current_path.write().insert(key, dir);
                         return build_element(format!("Path changed to {}", build_abs_path(current_path)).as_str());
+                    } else if contents.contains(&filename.as_str()) {
+                        return build_element(format!("`{}` is not a directory. It's a file.", filename).as_str());
                     } else {
                         return resolve_error(Errors::DirectoryNotFound);
                     }
                 }
             }
-        }
-    }
-
-    rsx! {    
-        div {
-            "cd response here",
         }
     }
 }
@@ -285,17 +297,134 @@ fn help_response() -> Element {
     ];
 
     rsx! {
-            }
-        },
-        div {
-            }
-            }
+        link { rel: "stylesheet", href: "terminal_prompt.css" },
+        table {
+            tr {
+                th { class: "table-header",
+                    "command"
+                }, 
+                th { class: "table-header",
+                "description"
+                }
+            },
+            for (cmd, desc) in HELP_CMD {
+                tr {
+                    td { class: "table-cmd",
+                        "{cmd}"
+                    }, 
+                    td {
+                        "{desc}"
+                    }
+                }
             }
         }
     }
 }
 
-fn generate_response(req: String, current_path: Signal<HashMap::<u8, String>>) -> Element {
+fn theme_help() -> Element {
+    static THEME_HELP : [(&str, &str); 4] = [
+        ("terminal", "A vintage terminal feel, with a green background."),
+        ("blue", "Everything is a shade of blue."),
+        ("matrix", "Black background; green text."),
+        ("modern", "A modern design.")
+    ];
+
+    rsx! {
+        div {
+            p { margin: "1em 1em 1em 0",
+                "There are four options for themes:"
+            },
+            table {
+                tr {
+                    th { class: "table-header",
+                        "option"
+                    }, 
+                    th { class: "table-header",
+                        "description"
+                    }
+                },
+                for (option, desc) in THEME_HELP {
+                    tr {
+                        td { class: "table-cmd",
+                            "{option}"
+                        }, 
+                        td {
+                            "{desc}"
+                        }
+                    }
+                }
+            },
+            p { margin: "1em 1em 1em 0",
+                "Usage: theme [option]"
+            }
+        }
+    }
+}
+
+fn resolve_theme(words: Vec::<String>, mut theme: Signal<ThemeStruct>) -> Element {
+    let mut word: String = String::new();
+    if words.len()>1 {
+        for i in 1..words.len() {
+            if words.get(i).unwrap().len()!=0 {
+                if(word.len()>0) {
+                    return resolve_error(Errors::ExtraParametersPassed);
+                }
+                word.push_str(words.get(i).unwrap());
+            }
+        }
+    }
+    if(words.len()==1 || word.len()==0) {
+        // theme.write().theme = Theme::MatrixInspired;
+        
+        let curr_theme = match theme.read().theme {
+            Theme::VintageTerminal => "terminal",
+            Theme::EverythingBlue => "blue",
+            Theme::MatrixInspired => "matrix",
+            Theme::Modern => "modern"
+        };
+        return build_element(format!("Theme is set to `{}`. To learn more, type \"theme help\"", curr_theme).as_str());
+
+    } else {
+        let mut theme_changed = false;
+        match word.trim() {
+            "terminal" => if(theme.read().theme != Theme::VintageTerminal) {
+                theme.write().theme = Theme::VintageTerminal;
+                theme_changed = true;
+            },
+            "blue" => if(theme.read().theme != Theme::EverythingBlue) {
+                theme.write().theme = Theme::EverythingBlue;
+                theme_changed = true;
+            },
+            "matrix" => if(theme.read().theme != Theme::MatrixInspired) {
+                theme.write().theme = Theme::MatrixInspired;
+                theme_changed = true;
+            },
+            "modern" => if(theme.read().theme != Theme::Modern) {
+                theme.write().theme = Theme::Modern;
+                theme_changed = true;
+            },
+            "help" => return theme_help(),
+            _ => {
+                return rsx!(
+                    div {
+                        p { margin: "1em 1em 1em 0",
+                            "Theme `{word.trim()}` not found."
+                        },
+                        {theme_help()}
+                    }
+                );
+            }
+        }
+        if theme_changed {
+            return build_element(format!("Theme set to `{}`.", word.trim()).as_str());
+        } else {
+            return build_element(format!("Theme is already set to `{}`.", word.trim()).as_str());
+        }
+    }
+}
+
+
+fn generate_response(req: String, current_path: Signal<HashMap::<u8, String>>, theme: Signal<ThemeStruct>) -> Element {
     let words: Vec<String> = req.trim().split_whitespace().map(|v| v.to_string()).collect();
 
     if words.len()==0 {
@@ -329,7 +458,10 @@ fn generate_response(req: String, current_path: Signal<HashMap::<u8, String>>) -
             },
             "exit" => {
                 return resolve_exit();
-            }
+            },
+            "theme" => {
+                return resolve_theme(words, theme);
+            },
             _ => {
                 return resolve_error(Errors::CommandNotFound);
             }
@@ -338,7 +470,7 @@ fn generate_response(req: String, current_path: Signal<HashMap::<u8, String>>) -
 }
 
 #[component]
-fn TerminalActiveEntry(mut entries: Signal<HashMap<u32, TerminalEntryData>>, mut start_from: Signal<u32>, mut ending: Signal<u32>, mut current_path: Signal<HashMap::<u8, String>>) -> Element {
+fn TerminalActiveEntry(mut entries: Signal<HashMap<u32, TerminalEntryData>>, mut start_from: Signal<u32>, mut ending: Signal<u32>, mut current_path: Signal<HashMap::<u8, String>>, mut theme: Signal<ThemeStruct> ) -> Element {
     let mut draft = use_signal(|| "".to_string());
     let mut entry_id = use_signal(|| 0);
 
@@ -354,7 +486,7 @@ fn TerminalActiveEntry(mut entries: Signal<HashMap<u32, TerminalEntryData>>, mut
                 let id = entry_id();
                 let entry = TerminalEntryData {
                     req: draft.to_string(),
-                    resp: generate_response(draft.to_string(), current_path),
+                    resp: generate_response(draft.to_string(), current_path, theme),
                 };
                 ending += 1;
                 entries.write().insert(id, entry);
@@ -381,7 +513,7 @@ fn TerminalActiveEntry(mut entries: Signal<HashMap<u32, TerminalEntryData>>, mut
 }
 
 #[component]
-fn TerminalEntry(mut entries: Signal<HashMap<u32, TerminalEntryData>>, id: u32, current_path: Signal<HashMap::<u8, String>>) -> Element {
+fn TerminalEntry(mut entries: Signal<HashMap<u32, TerminalEntryData>>, id: u32, current_path: Signal<HashMap::<u8, String>>, theme: Signal<ThemeStruct>) -> Element {
     let req = entries.read().get(&id).unwrap().req.clone();
     let resp = entries.read().get(&id).unwrap().resp.clone();
 
