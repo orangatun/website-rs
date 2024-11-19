@@ -7,6 +7,7 @@
 
 .prompt {
     color: #EF800A;
+    color: var(--primary);
     margin: 0.5em;
     -webkit-user-select: none;
     user-select: none;
@@ -20,11 +21,11 @@ input {
     border: 0;
     font: 1.3rem "Sometype Mono", monospace;
     height: 2em;
-    color:white;
+    color:var(--on-primary);
     width: 80%;
     display: inline-flex;
     right:0;
-    text-shadow: 0 0 5px #C8C8C8;
+    text-shadow: 0 0 5px var(--text-shadow);
 
     border-style: none;
     -webkit-user-select: none;
@@ -56,7 +57,7 @@ ul {
 
 .whisper-text {
     font-size: 0.5em;
-    color: #FFFFFF40;
+    color: var(--whisper-text);
 }
 
 .ls-item-container {
@@ -65,5 +66,5 @@ ul {
 }
 
 .directory {
-    color:#CBCBCB;
+    color:var(--on-secondary);
 }

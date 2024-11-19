@@ -1,14 +1,16 @@
 body {
-    background-color: #1a001a;
-    background-image: radial-gradient(ellipse at center, #009600C0, #132E13);
+    background-color: var(--background-color);
+    background-image: radial-gradient(ellipse at center, var(--bg-radial-start), var(--bg-radial-end));
     height: 100vh;
     padding-left: 1em;
     margin: 0;
-    color: white;
+    color: var(--on-primary);
     font: 1.3rem "Sometype Mono", monospace;
     text-shadow: 0 0 5px #C8C8C8;
 
     caret-color: #EF800A;
+    text-shadow: 0 0 5px var(--text-shadow);
+    caret-color: var(--primary);
 }
 
 /* This is to add the faint black lines overlay on top of the terminal */
@@ -40,7 +42,7 @@ body::after {
 }
 
 ::selection {
-    background: #0080FF;
+    background: var(--selection);
     text-shadow: none;
 }
 

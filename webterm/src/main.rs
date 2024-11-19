@@ -67,6 +67,7 @@ fn app() -> Element {
 
     let date_string = format!("{}", Local::now().format("%a, %m/%d/%Y, %l:%M:%S%p UTC%Z"));
     rsx! {
+        link { rel: "stylesheet", href:"vintage-terminal.css" },
         link { rel: "stylesheet", href: "main.css" },
         div { class:"container", padding: "0.5rem", position: "relative",
             div { font_size: "1.5rem",

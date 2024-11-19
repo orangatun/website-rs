@@ -1,0 +1,11 @@
+:root {
+    --text-shadow: #C8C8C8;
+    --primary: #EF800A;
+    --on-primary: #FFFFFF;
+    --on-secondary: #CBCBCB;
+    --background-color: #1A001A; 
+    --bg-radial-start: #009600C0;
+    --bg-radial-end: #132E13;
+    --whisper-text: #FFFFFF40;
+    --selection: #0080FF;
+}
