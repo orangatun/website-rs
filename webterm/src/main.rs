@@ -247,7 +247,7 @@ fn cd_response(words: Vec::<String>, mut current_path: Signal<HashMap::<u8, Stri
 
 fn resolve_error(err: Errors) -> Element {
     rsx! {
-        div {
+        p { class: "resp-container",
             match err {
                 Errors::CommandNotFound => "Command not found. Use 'help' command to see list of commands.",
                 Errors::ExtraParametersPassed => "Extra parameters found in the command.",
