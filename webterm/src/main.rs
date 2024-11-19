@@ -273,53 +273,23 @@ fn resolve_exit() -> Element {
 
 fn help_response() -> Element {
 
+    static HELP_CMD : [(&str, &str); 8] = [
+        ("ls", "Lists files and directories inside current directory."),
+        ("cd", "Changes directory to the go up one level (parent), or down one level (child)."),
+        ("pwd", "Lists the full path of current working directory."),
+        ("cat", "Used to print the contents of a file."),
+        ("dog", "Used to print the contents of a file."),
+        ("help", "Displays this list of commands available."),
+        ("clear", "Clears the terminal."),
+        ("theme", "Change the theme of the terminal.")
+    ];
+
     rsx! {
-        div {
-            span { class: "help-command",
-                "ls"
-            }, 
-            p { class: "help-desc",
-                "Lists files and directories inside current directory."
             }
         },
         div {
-            span { class: "help-command",
-                "cd"
-            }, 
-            p { class: "help-desc",
-                "Changes directory to the go up one level (parent), or down one level (child)."
             }
-        },
-        div {
-            span { class: "help-command",
-                "pwd"
-            }, 
-            p { class: "help-desc",
-                "Lists the full path of current working directory."
             }
-        },
-        div {
-            span { class: "help-command",
-                "cat"
-            }, 
-            p { class: "help-desc",
-                "Used to print the contents of a file."
-            }
-        },
-        div {
-            span { class: "help-command",
-                "dog"
-            }, 
-            p { class: "help-desc",
-                "Used to print the contents of a file."
-            }
-        },
-        div {
-            span { class: "help-command",
-                "help"
-            }, 
-            p { class: "help-desc",
-                "Displays this list of commands available."
             }
         }
     }
