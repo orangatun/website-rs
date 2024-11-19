@@ -75,3 +75,7 @@ p {
     width: auto;
     overflow: auto;
 }
+
+input {
+    text-shadow: 0 0 5px var(--text-shadow);
+}

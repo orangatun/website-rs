@@ -27,7 +27,6 @@ input {
     width: 80%;
     display: inline-flex;
     right:0;
-    text-shadow: 0 0 5px var(--text-shadow);
 
     border-style: none;
     -webkit-user-select: none;
@@ -91,4 +90,5 @@ ul {
 
 tr {
     color: var(--on-secondary);
+    vertical-align: top;
 }

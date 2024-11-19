@@ -81,3 +81,7 @@ p {
     background-color: var(--bg-translucent-hover);
     transition: background-color ease-in-out .5s;
 }
+
+input {
+    text-shadow: none;
+}
