@@ -264,7 +264,7 @@ fn resolve_exit() -> Element {
     rsx! {
         link { rel: "stylesheet", href: "terminal_prompt.css" },
         div { id: "exit-container",
-            p { "There's no exiting to this terminal." },
+            p { "There's no exiting this terminal." },
             p { "The only way out is turning off the internet." }
             p { class: "whisper-text", "Or, you could close this tab." }
         }
@@ -425,7 +425,7 @@ fn TerminalEntry(mut entries: Signal<HashMap<u32, TerminalEntryData>>, id: u32, 
                 class:"req-container",
                 "{req}"
             },
-            { resp }
+            {resp}
         }
     }
 }
