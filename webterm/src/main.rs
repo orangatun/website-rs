@@ -395,14 +395,16 @@ fn TerminalActiveEntry(mut entries: Signal<HashMap<u32, TerminalEntryData>>, mut
 
     rsx! {
         link { rel: "stylesheet", href: "terminal_prompt.css" },
-        span {
-            class:"prompt", ">"
-        },
-        input {
-            value: "{draft}",
-            autofocus: "true",
-            oninput: move |event| draft.set(event.value()),
-            onkeyup
+        div { class: "entry-container",
+            span {
+                class:"prompt", ">"
+            },
+            input {
+                value: "{draft}",
+                autofocus: "true",
+                oninput: move |event| draft.set(event.value()),
+                onkeyup
+            }
         }
     }
 }
@@ -414,12 +416,12 @@ fn TerminalEntry(mut entries: Signal<HashMap<u32, TerminalEntryData>>, id: u32, 
 
     rsx! {
         link { rel: "stylesheet", href: "terminal_prompt.css" },
-        div {
+        div { class: "entry-container",
             span {
                 class:"prompt", ">"
             },
             p { 
-                class:"req",
+                class:"req-container",
                 "{req}"
             },
             { resp }
