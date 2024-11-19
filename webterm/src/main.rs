@@ -46,7 +46,7 @@ fn files() -> &'static HashMap<&'static str, &'static str> {
     FILES.get_or_init(|| {
         let mut files = HashMap::from([
             ("/about/summary", "This project is built in Rust, using Dioxus, and some CSS."),
-            ("/about/secrets/shh", "There's an `exit` command. Don't try that."),
+            ("/about/secrets/shhh", "There's an `exit` command. Don't try that."),
             ("/projects/summary", "Let me talk about this one. I worked 4 days on building this after two years of not using Rust. I'd used Rust for 3 months before this, and I'd never heard of Dioxus before. Here we are. I'm a quick learner and I love to push myself to learn."),
             ("/random/warp", "I think Warp is pretty cool. I'd love to be a part of the team, and contribute to making it a great product."),
             ("/random/rules_of_internet", "It's silly, and mostly trolls. Of course, it's on a chan! Look up rule 16.")
@@ -64,14 +64,31 @@ fn app() -> Element {
     let mut start_from = use_signal(||0);
     let mut ending = use_signal(||0);
 
-    let date_string = format!("{}", Local::now().format("%a, %m/%d/%Y, %l:%M:%S %p UTC%Z"));
 
+    let date_string = format!("{}", Local::now().format("%a, %m/%d/%Y, %l:%M:%S%p UTC%Z"));
     rsx! {
+        link { rel: "stylesheet", href:"vintage-terminal.css" },
         link { rel: "stylesheet", href: "main.css" },
         div { class:"container", padding: "0.5rem", position: "relative",
             div { font_size: "1.5rem",
+        div { class:"root-container", 
+            div { class:"container", padding: "0.5rem", position: "relative", font_size: "1.5rem",
                 p { "Welcome to Raghu's Terminal! (v0.1.0)" },
                 p { "{date_string}" },
+                div { class:"github-container",
+                    span { "Check out the source at " },
+                    a { href: "https://github.com/orangatun/website-rs", "https://github.com/orangatun/website-rs" },
+                },
+                p { margin: "1em 0.5em 0.5em 0.5em",
+                    "Use 'help' command to list all available commands" 
+                },
+            }, 
+            div { class:"container",
+                ul {
+                    class: "entries-list",
+                    for id in start_from()..ending() {
+                    }
+                },
             }
         }, 
         div {
@@ -186,7 +203,7 @@ fn cd_response(words: Vec::<String>, mut current_path: Signal<HashMap::<u8, Stri
     if(words.len()==1 || word.len()==0) {
         for i in 1..current_path().len() {
             let key = i as u8;
-            current_path().remove(&key);
+            current_path.write().remove(&key);
         }
     } else {
         let parts : Vec::<&str> = word.trim().split("/").collect();
@@ -230,7 +247,7 @@ fn cd_response(words: Vec::<String>, mut current_path: Signal<HashMap::<u8, Stri
 
 fn resolve_error(err: Errors) -> Element {
     rsx! {
-        div {
+        p { class: "resp-container",
             match err {
                 Errors::CommandNotFound => "Command not found. Use 'help' command to see list of commands.",
                 Errors::ExtraParametersPassed => "Extra parameters found in the command.",
@@ -247,7 +264,7 @@ fn resolve_exit() -> Element {
     rsx! {
         link { rel: "stylesheet", href: "terminal_prompt.css" },
         div { id: "exit-container",
-            p { "There's no exiting to this terminal." },
+            p { "There's no exiting this terminal." },
             p { "The only way out is turning off the internet." }
             p { class: "whisper-text", "Or, you could close this tab." }
         }
@@ -256,53 +273,23 @@ fn resolve_exit() -> Element {
 
 fn help_response() -> Element {
 
+    static HELP_CMD : [(&str, &str); 8] = [
+        ("ls", "Lists files and directories inside current directory."),
+        ("cd", "Changes directory to the go up one level (parent), or down one level (child)."),
+        ("pwd", "Lists the full path of current working directory."),
+        ("cat", "Used to print the contents of a file."),
+        ("dog", "Used to print the contents of a file."),
+        ("help", "Displays this list of commands available."),
+        ("clear", "Clears the terminal."),
+        ("theme", "Change the theme of the terminal.")
+    ];
+
     rsx! {
-        div {
-            span { class: "help-command",
-                "ls"
-            }, 
-            p { class: "help-desc",
-                "Lists files and directories inside current directory."
             }
         },
         div {
-            span { class: "help-command",
-                "cd"
-            }, 
-            p { class: "help-desc",
-                "Changes directory to the go up one level (parent), or down one level (child)."
             }
-        },
-        div {
-            span { class: "help-command",
-                "pwd"
-            }, 
-            p { class: "help-desc",
-                "Lists the full path of current working directory."
             }
-        },
-        div {
-            span { class: "help-command",
-                "cat"
-            }, 
-            p { class: "help-desc",
-                "Used to print the contents of a file."
-            }
-        },
-        div {
-            span { class: "help-command",
-                "dog"
-            }, 
-            p { class: "help-desc",
-                "Used to print the contents of a file."
-            }
-        },
-        div {
-            span { class: "help-command",
-                "help"
-            }, 
-            p { class: "help-desc",
-                "Displays this list of commands available."
             }
         }
     }
@@ -379,14 +366,16 @@ fn TerminalActiveEntry(mut entries: Signal<HashMap<u32, TerminalEntryData>>, mut
 
     rsx! {
         link { rel: "stylesheet", href: "terminal_prompt.css" },
-        span {
-            class:"prompt", ">"
-        },
-        input {
-            value: "{draft}",
-            autofocus: "true",
-            oninput: move |event| draft.set(event.value()),
-            onkeyup
+        div { class: "entry-container",
+            span {
+                class:"prompt", ">"
+            },
+            input {
+                value: "{draft}",
+                autofocus: "true",
+                oninput: move |event| draft.set(event.value()),
+                onkeyup
+            }
         }
     }
 }
@@ -398,15 +387,15 @@ fn TerminalEntry(mut entries: Signal<HashMap<u32, TerminalEntryData>>, id: u32, 
 
     rsx! {
         link { rel: "stylesheet", href: "terminal_prompt.css" },
-        div {
+        div { class: "entry-container",
             span {
                 class:"prompt", ">"
             },
             p { 
-                class:"req",
+                class:"req-container",
                 "{req}"
             },
-            { resp }
+            {resp}
         }
     }
 }
