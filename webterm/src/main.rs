@@ -64,8 +64,8 @@ fn app() -> Element {
     let mut start_from = use_signal(||0);
     let mut ending = use_signal(||0);
 
-    let date_string = format!("{}", Local::now().format("%a, %m/%d/%Y, %l:%M:%S %p UTC%Z"));
 
+    let date_string = format!("{}", Local::now().format("%a, %m/%d/%Y, %l:%M:%S%p UTC%Z"));
     rsx! {
         link { rel: "stylesheet", href: "main.css" },
         div { class:"container", padding: "0.5rem", position: "relative",
