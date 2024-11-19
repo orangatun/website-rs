@@ -70,8 +70,24 @@ fn app() -> Element {
         link { rel: "stylesheet", href: "main.css" },
         div { class:"container", padding: "0.5rem", position: "relative",
             div { font_size: "1.5rem",
+        div { class:"root-container", 
+            div { class:"container", padding: "0.5rem", position: "relative", font_size: "1.5rem",
                 p { "Welcome to Raghu's Terminal! (v0.1.0)" },
                 p { "{date_string}" },
+                div { class:"github-container",
+                    span { "Check out the source at " },
+                    a { href: "https://github.com/orangatun/website-rs", "https://github.com/orangatun/website-rs" },
+                },
+                p { margin: "1em 0.5em 0.5em 0.5em",
+                    "Use 'help' command to list all available commands" 
+                },
+            }, 
+            div { class:"container",
+                ul {
+                    class: "entries-list",
+                    for id in start_from()..ending() {
+                    }
+                },
             }
         }, 
         div {

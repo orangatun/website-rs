@@ -34,6 +34,11 @@ body::after {
     margin: 0;
 }
 
+.github-container {
+    margin: 0 0 0 0.75rem;
+    font-size: 0.8em;
+}
+
 ::selection {
     background: #0080FF;
     text-shadow: none;
@@ -49,4 +54,10 @@ body::after {
 
 p {
     margin: 0.5em;
+}
+
+.root-container {
+    height: 100vh;
+    width: auto;
+    overflow: auto;
 }
