@@ -1,0 +1,12 @@
+/* harmony-of-blue theme palette */
+:root {
+    --text-shadow: #9BE8F0;
+    --primary: #E4815A;
+    --on-primary: #ffffff;
+    --on-secondary: #bfd9e5;
+    --background-color: #0357AF;
+    --bg-radial-start: #0357AF55;
+    --bg-radial-end: #0357AF89;
+    --whisper-text: #FFFFFF40;
+    --selection: #0080FF;
+}
