@@ -41,6 +41,20 @@ body::after {
     font-size: 0.8em;
 }
 
+.github-container>a {
+    /* text-decoration: none; */
+    text-decoration-color: var(--on-secondary);
+    color: var(--primary);
+    text-shadow: 0 0 2px var(--primary);
+}
+.github-container>a::selection {
+    background: var(--selection);
+    text-shadow: none;
+}
+.github-container>a:hover {
+    text-shadow: 0 0 8px var(--primary);
+}
+
 ::selection {
     background: var(--selection);
     text-shadow: none;
