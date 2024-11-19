@@ -203,7 +203,7 @@ fn cd_response(words: Vec::<String>, mut current_path: Signal<HashMap::<u8, Stri
     if(words.len()==1 || word.len()==0) {
         for i in 1..current_path().len() {
             let key = i as u8;
-            current_path().remove(&key);
+            current_path.write().remove(&key);
         }
     } else {
         let parts : Vec::<&str> = word.trim().split("/").collect();
