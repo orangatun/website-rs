@@ -46,7 +46,7 @@ fn files() -> &'static HashMap<&'static str, &'static str> {
     FILES.get_or_init(|| {
         let mut files = HashMap::from([
             ("/about/summary", "This project is built in Rust, using Dioxus, and some CSS."),
-            ("/about/secrets/shh", "There's an `exit` command. Don't try that."),
+            ("/about/secrets/shhh", "There's an `exit` command. Don't try that."),
             ("/projects/summary", "Let me talk about this one. I worked 4 days on building this after two years of not using Rust. I'd used Rust for 3 months before this, and I'd never heard of Dioxus before. Here we are. I'm a quick learner and I love to push myself to learn."),
             ("/random/warp", "I think Warp is pretty cool. I'd love to be a part of the team, and contribute to making it a great product."),
             ("/random/rules_of_internet", "It's silly, and mostly trolls. Of course, it's on a chan! Look up rule 16.")
