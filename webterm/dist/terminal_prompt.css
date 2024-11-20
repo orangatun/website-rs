@@ -1,0 +1,94 @@
+.entry-container {
+    margin: 1em 0.5em 1em 0.5em;
+    width:fit-width;
+    /* padding: 0.5em 0.5em; */
+}
+
+.entry-container>div {
+    color: var(--on-secondary);
+}
+
+.prompt {
+    color: var(--primary);
+    margin: 0.5em;
+    -webkit-user-select: none;
+    user-select: none;
+    display:inline-flex;
+}
+
+
+input {
+    background-color: transparent;
+    padding: 0 0 0 0.5em;
+    border: 0;
+    font: 1.3rem "Sometype Mono", monospace;
+    height: 2em;
+    color:var(--on-primary);
+    width: 80%;
+    display: inline-flex;
+    right:0;
+    text-shadow: 0 0 5px var(--text-shadow);
+
+    border-style: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.req-container {
+    display: inline;
+    margin: 0.5em;
+}
+
+.resp-container {
+    margin: 0.5em;
+    color: var(--on-secondary);
+}
+
+input:focus {
+    background-color: transparent;
+    border: 0;
+    margin: 0;
+    outline: none;
+}
+
+ul {
+    margin:0;
+}
+
+.whisper-text {
+    font-size: 0.5em;
+    margin: 1em;
+    color: var(--whisper-text);
+}
+
+.ls-item-container {
+    padding: 0 1em 0 1em;
+    display: inline-flex;
+}
+
+.directory {
+    color:var(--on-secondary);
+}
+
+.help-cmd {
+    tab-size: 8;
+    display: inline-flex;
+}
+
+.help-desc {
+    display: inline-flex;
+}
+
+.table-header {
+    text-align: left;
+    color:var(--on-secondary);
+}
+
+.table-cmd {
+    min-width: 8em;
+    color: var(--on-secondary);
+}
+
+tr {
+    color: var(--on-secondary);
+}
