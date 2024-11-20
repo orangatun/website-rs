@@ -2,6 +2,9 @@
 
 This project is built using the Dioxus framework. It's completely written in Rust. I've added a few things using CSS.
 
+It's currently deployed at [https://terminal.raghunadham.com](https://terminal.raghunadham.com).
+
+
 ## Features
 
 This is everything you can do with this application:
